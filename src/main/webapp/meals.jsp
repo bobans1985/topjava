@@ -19,12 +19,13 @@
     <%
         List<MealWithExceed> meals = (List<MealWithExceed>) request.getAttribute("mealsList");
         System.out.println(meals);
+
+        DateTimeFormatter fmt = DateTimeFormatter.ofLocalizedDateTime(FormatStyle.SHORT);
         for (MealWithExceed meal : meals) {
-            DateTimeFormatter fmt = DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM);
             //ZonedDateTime zdt = ZonedDateTime.of(meal.getDateTime(), ZoneId.of("Europe/Moscow"));
             String tagcolor = meal.isExceed() ? " bgcolor=\"red\" " : " bgcolor=\"green\" ";
             //out.print("<TR" + tagcolor + "><TD>" + fmt.format(zdt) + "</TD><TD>" + meal.getDescription() + "</TD><TD>" + meal.getCalories() + "</TD><TD>" + meal.isExceed() + "</TD><TR>");
-            out.print("<TR" + tagcolor + "><TD>" + DateTimeFormatter.ofLocalizedDateTime(FormatStyle.SHORT).format(meal.getDateTime()) + "</TD><TD>" + meal.getDescription() + "</TD><TD>" + meal.getCalories() + "</TD><TD>" + meal.isExceed() + "</TD><TR>");
+            out.print("<TR" + tagcolor + "><TD>" + fmt.format(meal.getDateTime()) + "</TD><TD>" + meal.getDescription() + "</TD><TD>" + meal.getCalories() + "</TD><TD>" + meal.isExceed() + "</TD><TR>");
         }
     %>
 </table>
@@ -41,7 +42,6 @@
             <TR bgcolor="red">
         </c:if>
         ${meal.exceed?'TEST':'not test'}--%>
-
         <td>${DateTimeFormatter.ofLocalizedDateTime(FormatStyle.SHORT).format(meal.dateTime)}</td>
         <td>${meal.description}</td>
         <td>${meal.calories}</td>
