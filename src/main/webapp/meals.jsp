@@ -18,8 +18,6 @@
 <table border="1">
     <%
         List<MealWithExceed> meals = (List<MealWithExceed>) request.getAttribute("mealsList");
-        System.out.println(meals);
-
         DateTimeFormatter fmt = DateTimeFormatter.ofLocalizedDateTime(FormatStyle.SHORT);
         for (MealWithExceed meal : meals) {
             //ZonedDateTime zdt = ZonedDateTime.of(meal.getDateTime(), ZoneId.of("Europe/Moscow"));
@@ -42,13 +40,19 @@
             <TR bgcolor="red">
         </c:if>
         ${meal.exceed?'TEST':'not test'}--%>
+        <td>${meal.id}</td>
         <td>${DateTimeFormatter.ofLocalizedDateTime(FormatStyle.SHORT).format(meal.dateTime)}</td>
         <td>${meal.description}</td>
         <td>${meal.calories}</td>
         <td>${meal.exceed}</td>
+        <td><a href="meals?step=delete&id=${meal.id}">Del</a></td>
+        <td><a href="meals?step=update&id=${meal.id}">Update</a></td>
         </tr>
     </c:forEach>
 </table>
+
+<p><a href="meals?step=add">Add new meal</a></p>
+
 
 </body>
 </html>

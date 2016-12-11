@@ -1,8 +1,10 @@
 package ru.javawebinar.topjava.web;
 
 import org.slf4j.Logger;
+import ru.javawebinar.topjava.dao.MealDaoMemory;
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.model.MealWithExceed;
+import ru.javawebinar.topjava.model.MealsInMemory;
 import ru.javawebinar.topjava.util.MealsUtil;
 
 import javax.servlet.ServletException;
@@ -10,6 +12,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.io.InterruptedIOException;
+import java.sql.Date;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.Month;
@@ -26,21 +30,54 @@ import static org.slf4j.LoggerFactory.getLogger;
  */
 public class MealServlet extends HttpServlet {
     private static final Logger LOG = getLogger(UserServlet.class);
-    List<Meal> mealsList = Arrays.asList(
-            new Meal(LocalDateTime.of(2015, Month.MAY, 30, 10, 0), "Завтрак", 500),
-            new Meal(LocalDateTime.of(2015, Month.MAY, 30, 13, 0), "Обед", 1000),
-            new Meal(LocalDateTime.of(2015, Month.MAY, 30, 20, 0), "Ужин", 500),
-            new Meal(LocalDateTime.of(2015, Month.MAY, 31, 10, 0), "Завтрак", 1000),
-            new Meal(LocalDateTime.of(2015, Month.MAY, 31, 13, 0), "Обед", 500),
-            new Meal(LocalDateTime.of(2015, Month.MAY, 31, 20, 0), "Ужин", 510)
-    );
+    //MealsInMemory meals= new MealsInMemory();
+    // MealDaoMemory meals = new MealDaoMemory(new MealsInMemory());
+    MealDaoMemory meals = new MealDaoMemory();
+
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        request.setCharacterEncoding("UTF-8");
+        if ((request.getParameter("type") != null) && (request.getParameter("type").equals("add"))) {
+            meals.doAdd(new Meal(meals.getLastId(),
+                    //request.getParameter("Date"),
+                    LocalDateTime.now(),
+                    request.getParameter("Description"),
+                    Integer.parseInt(request.getParameter("Calories"))
+            ));
+        } else if ((request.getParameter("type") != null)
+                && (request.getParameter("type").equals("update"))
+                && (request.getParameter("id")!=null)) {
+            Meal temp= meals.get(Integer.parseInt(request.getParameter("id")));
+            temp.setCalories(Integer.parseInt(request.getParameter("Calories")));
+            temp.setDateTime(LocalDateTime.now());
+            temp.setDescription(request.getParameter("Description"));
+            meals.doUpdate(temp);
+
+        }
+        response.sendRedirect("meals");
+    }
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         LOG.debug("forward to meals");
-        request.setAttribute("test","bobans");
 
-        List<MealWithExceed> mealsListExceed= MealsUtil.getFilteredWithExceeded(mealsList,LocalTime.MIN, LocalTime.MAX,2000);
-        request.setAttribute("mealsList",mealsListExceed);
-        request.getRequestDispatcher("/meals.jsp").forward(request,response);
+
+        //MealDaoMemory daoMeals= new MealDaoMemory(meals);
+        //System.out.println(request.getParameter("step"));
+
+        if ((request.getParameter("step") != null) && (request.getParameter("step").equals("add"))) {
+            request.getRequestDispatcher("/add.jsp").forward(request, response);
+        } else if ((request.getParameter("step") != null) && (request.getParameter("step").equals("update")) && (request.getParameter("id") != null)) {
+            request.setAttribute("Date",meals.get(Integer.parseInt(request.getParameter("id"))).getDateTime());
+            request.setAttribute("Description",meals.get(Integer.parseInt(request.getParameter("id"))).getDescription());
+            request.setAttribute("Calories",meals.get(Integer.parseInt(request.getParameter("id"))).getCalories());
+            request.setAttribute("id",request.getParameter("id"));
+            request.getRequestDispatcher("/update.jsp").forward(request, response);
+        } else if ((request.getParameter("step") != null) && (request.getParameter("step").equals("delete")) && (request.getParameter("id") != null)) {
+            meals.doDelete(Integer.parseInt(request.getParameter("id")));
+            response.sendRedirect("meals");
+        } else {
+            List<MealWithExceed> mealsListExceed = MealsUtil.getFilteredWithExceeded(meals.getAll(), LocalTime.MIN, LocalTime.MAX, 2000);
+            request.setAttribute("mealsList", mealsListExceed);
+            request.getRequestDispatcher("/meals.jsp").forward(request, response);
+        }
     }
 }
