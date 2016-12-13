@@ -12,16 +12,9 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.io.InterruptedIOException;
-import java.sql.Date;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.time.Month;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collector;
-import java.util.stream.Collectors;
 
 import static org.slf4j.LoggerFactory.getLogger;
 
@@ -30,7 +23,8 @@ import static org.slf4j.LoggerFactory.getLogger;
  */
 public class MealServlet extends HttpServlet {
     private static final Logger LOG = getLogger(UserServlet.class);
-    MealDaoMemory meals = new MealDaoMemory();
+    MealsInMemory memory=new MealsInMemory();
+    MealDaoMemory meals = new MealDaoMemory(memory);
 
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         LOG.debug("doPost meals");

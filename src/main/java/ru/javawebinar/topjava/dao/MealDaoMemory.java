@@ -3,8 +3,6 @@ package ru.javawebinar.topjava.dao;
 
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.model.MealsInMemory;
-
-import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
@@ -12,11 +10,15 @@ import java.util.List;
  * Created by bobans on 10.12.16.
  */
 public class MealDaoMemory implements IMealDao {
-     MealsInMemory meals = new MealsInMemory();
+     MealsInMemory meals;
 
 
     public void doAdd(Meal meal) {
         this.meals.add(meal);
+    }
+
+    public MealDaoMemory(MealsInMemory meals) {
+        this.meals=meals;
     }
 
     public Meal get(int id) {
