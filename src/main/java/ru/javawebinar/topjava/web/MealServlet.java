@@ -18,12 +18,9 @@ import java.util.List;
 
 import static org.slf4j.LoggerFactory.getLogger;
 
-/**
- * Created by bobans on 10.12.16.
- */
 public class MealServlet extends HttpServlet {
     private static final Logger LOG = getLogger(UserServlet.class);
-    MealsInMemory memory=new MealsInMemory();
+    MealsInMemory memory = new MealsInMemory();
     MealDaoMemory meals = new MealDaoMemory(memory);
 
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -31,7 +28,7 @@ public class MealServlet extends HttpServlet {
         request.setCharacterEncoding("UTF-8");
         if ((request.getParameter("type") != null) && (request.getParameter("type").equals("add"))) {
             LOG.debug("Add meals");
-            meals.doAdd(new Meal(meals.getLastId(),
+            meals.doAdd(new Meal(memory.getLastId(),
                     //request.getParameter("Date"),
                     LocalDateTime.now(),
                     request.getParameter("Description"),
@@ -40,14 +37,12 @@ public class MealServlet extends HttpServlet {
         } else if ((request.getParameter("type") != null)
                 && (request.getParameter("type").equals("update"))
                 && (request.getParameter("id") != null)) {
-            Meal temp = new Meal(Integer.parseInt(request.getParameter("id")),
+            meals.doUpdate(new Meal(Integer.parseInt(request.getParameter("id")),
                     //request.getParameter("Date"),
                     LocalDateTime.now(),
                     request.getParameter("Description"),
                     Integer.parseInt(request.getParameter("Calories"))
-            );
-            LOG.debug("Update meals = " + temp.toString());
-            meals.doUpdate(temp);
+            ));
 
         }
         response.sendRedirect("meals");
@@ -68,7 +63,7 @@ public class MealServlet extends HttpServlet {
             meals.doDelete(Integer.parseInt(request.getParameter("id")));
             response.sendRedirect("meals");
         } else {
-            List<MealWithExceed> mealsListExceed = MealsUtil.getFilteredWithExceeded(meals.getAll(), LocalTime.MIN, LocalTime.MAX, 2000);
+            List<MealWithExceed> mealsListExceed = MealsUtil.getFilteredWithExceeded(memory.getAll(), LocalTime.MIN, LocalTime.MAX, 2000);
             request.setAttribute("mealsList", mealsListExceed);
             request.getRequestDispatcher("/meals.jsp").forward(request, response);
         }
