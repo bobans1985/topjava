@@ -11,47 +11,26 @@ import java.util.List;
 /**
  * Created by bobans on 10.12.16.
  */
-public class MealDaoMemory {
-    //List<Meal> meals = new ArrayList<>();
-    MealsInMemory meals = new MealsInMemory();
-
-
-    /*public MealDaoMemory(List<Meal> meals) {
-        this.meals = meals;
-    }
-
-    public MealDaoMemory(MealsInMemory meals) {
-        for (Meal meal : meals.getAll()) {
-            this.meals.add(meal);
-        }
-    }*/
+public class MealDaoMemory implements IMealDao {
+     MealsInMemory meals = new MealsInMemory();
 
 
     public void doAdd(Meal meal) {
         this.meals.add(meal);
     }
 
-
     public Meal get(int id) {
-        Meal res= this.meals.get(0);
-        for (Meal ttt : meals.getAll()) {
-            if (ttt.getId()==id) res=ttt;
+        Meal res= this.meals.getAll().get(0);
+        for (Meal temp : meals.getAll()) {
+            if (temp.getId()==id) res=temp;
         }
         return res;
     }
 
 
     public void doUpdate(Meal meal) {
-        this.meals.set(meal);
-       /* int i = 0;
-        for (Meal ttt : meals) {
-            i++;
-            if (ttt == meal) {
-                meals.set(i, meal);
-                break;
-            }
-        }*/
-
+        doDelete(meal.getId());
+        meals.add(meal);
     }
 
     public void doDelete(int id) {

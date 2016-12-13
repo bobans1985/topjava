@@ -30,13 +30,13 @@ import static org.slf4j.LoggerFactory.getLogger;
  */
 public class MealServlet extends HttpServlet {
     private static final Logger LOG = getLogger(UserServlet.class);
-    //MealsInMemory meals= new MealsInMemory();
-    // MealDaoMemory meals = new MealDaoMemory(new MealsInMemory());
     MealDaoMemory meals = new MealDaoMemory();
 
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        LOG.debug("doPost meals");
         request.setCharacterEncoding("UTF-8");
         if ((request.getParameter("type") != null) && (request.getParameter("type").equals("add"))) {
+            LOG.debug("Add meals");
             meals.doAdd(new Meal(meals.getLastId(),
                     //request.getParameter("Date"),
                     LocalDateTime.now(),
@@ -45,11 +45,14 @@ public class MealServlet extends HttpServlet {
             ));
         } else if ((request.getParameter("type") != null)
                 && (request.getParameter("type").equals("update"))
-                && (request.getParameter("id")!=null)) {
-            Meal temp= meals.get(Integer.parseInt(request.getParameter("id")));
-            temp.setCalories(Integer.parseInt(request.getParameter("Calories")));
-            temp.setDateTime(LocalDateTime.now());
-            temp.setDescription(request.getParameter("Description"));
+                && (request.getParameter("id") != null)) {
+            Meal temp = new Meal(Integer.parseInt(request.getParameter("id")),
+                    //request.getParameter("Date"),
+                    LocalDateTime.now(),
+                    request.getParameter("Description"),
+                    Integer.parseInt(request.getParameter("Calories"))
+            );
+            LOG.debug("Update meals = " + temp.toString());
             meals.doUpdate(temp);
 
         }
@@ -57,19 +60,15 @@ public class MealServlet extends HttpServlet {
     }
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        LOG.debug("forward to meals");
-
-
-        //MealDaoMemory daoMeals= new MealDaoMemory(meals);
-        //System.out.println(request.getParameter("step"));
+        LOG.debug("doGet meals");
 
         if ((request.getParameter("step") != null) && (request.getParameter("step").equals("add"))) {
             request.getRequestDispatcher("/add.jsp").forward(request, response);
         } else if ((request.getParameter("step") != null) && (request.getParameter("step").equals("update")) && (request.getParameter("id") != null)) {
-            request.setAttribute("Date",meals.get(Integer.parseInt(request.getParameter("id"))).getDateTime());
-            request.setAttribute("Description",meals.get(Integer.parseInt(request.getParameter("id"))).getDescription());
-            request.setAttribute("Calories",meals.get(Integer.parseInt(request.getParameter("id"))).getCalories());
-            request.setAttribute("id",request.getParameter("id"));
+            request.setAttribute("Date", meals.get(Integer.parseInt(request.getParameter("id"))).getDateTime());
+            request.setAttribute("Description", meals.get(Integer.parseInt(request.getParameter("id"))).getDescription());
+            request.setAttribute("Calories", meals.get(Integer.parseInt(request.getParameter("id"))).getCalories());
+            request.setAttribute("id", request.getParameter("id"));
             request.getRequestDispatcher("/update.jsp").forward(request, response);
         } else if ((request.getParameter("step") != null) && (request.getParameter("step").equals("delete")) && (request.getParameter("id") != null)) {
             meals.doDelete(Integer.parseInt(request.getParameter("id")));

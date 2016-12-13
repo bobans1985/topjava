@@ -29,26 +29,6 @@ public class MealsInMemory {
         }
     }
 
-    public MealsInMemory(Meal meal) {
-        this.meals.add(meal);
-        this.id.incrementAndGet();
-    }
-
-    public MealsInMemory(List<Meal> meals) {
-        for (Meal meal : meals) {
-            this.meals.add(meal);
-            this.id.incrementAndGet();
-        }
-    }
-
-    public Meal get(int id) {
-        return meals.get(id);
-    }
-
-    public Meal getOneMeal(int id) {
-        return meals.get(id);
-    }
-
     public List<Meal> getAll() {
         return this.meals;
     }
@@ -60,22 +40,6 @@ public class MealsInMemory {
     public void add(Meal meal) {
         this.meals.add(meal);
         this.id.incrementAndGet();
-    }
-
-    public void set(Meal meal) {
-        ListIterator<Meal> it = meals.listIterator();
-        while (it.hasNext()) {
-            Meal temp = it.next();
-            if (temp.getId() == meal.getId())
-                it.set(temp);
-        }
-        //this.meals.set(meal.getId(),meal);
-    }
-
-
-    public void remove(int id) {
-        this.meals.remove(id);
-        //this.id.decrementAndGet();
     }
 
 
