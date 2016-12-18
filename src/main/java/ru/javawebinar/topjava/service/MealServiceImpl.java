@@ -3,6 +3,7 @@ package ru.javawebinar.topjava.service;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.repository.MealRepository;
 import ru.javawebinar.topjava.repository.mock.InMemoryMealRepositoryImpl;
@@ -17,11 +18,12 @@ import static ru.javawebinar.topjava.util.ValidationUtil.checkNotFoundWithId;
  * GKislin
  * 06.03.2015.
  */
+@Service
 public class MealServiceImpl implements MealService {
 
-    protected final Logger LOG = LoggerFactory.getLogger(getClass());
     @Autowired
     private MealRepository repository;
+    protected final Logger LOG = LoggerFactory.getLogger(getClass());
 
     {
         repository = new InMemoryMealRepositoryImpl();
