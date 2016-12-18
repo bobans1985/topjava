@@ -22,14 +22,14 @@ public class dataObjects {
             new User(2, "user1", "user1@inbox.ru", "password1", ROLE_USER),
             new User(3, "user2", "user2@inbox.ru", "password2", ROLE_USER)
     );
-    public static final InMemoryUserRepositoryImpl users = new InMemoryUserRepositoryImpl();
+    //TODO Изменить getId в лоб на Id
     public static final List<Meal> MEALS = Arrays.asList(
-            new Meal(LocalDateTime.of(2015, Month.MAY, 30, 10, 0), "Завтрак", 500, users.get(1)),
-            new Meal(LocalDateTime.of(2015, Month.MAY, 30, 13, 0), "Обед", 1000, users.get(2)),
-            new Meal(LocalDateTime.of(2015, Month.MAY, 30, 20, 0), "Ужин", 500, users.get(2)),
-            new Meal(LocalDateTime.of(2015, Month.MAY, 31, 10, 0), "Завтрак", 1000, users.get(2)),
-            new Meal(LocalDateTime.of(2015, Month.MAY, 31, 13, 0), "Обед", 500, users.get(3)),
-            new Meal(LocalDateTime.of(2015, Month.MAY, 31, 20, 0), "Ужин", 510, users.get(3))
+            new Meal(LocalDateTime.of(2015, Month.MAY, 30, 10, 0), "Завтрак", 500, 1),
+            new Meal(LocalDateTime.of(2015, Month.MAY, 30, 13, 0), "Обед", 1000, 2),
+            new Meal(LocalDateTime.of(2015, Month.MAY, 30, 20, 0), "Ужин", 500, 3),
+            new Meal(LocalDateTime.of(2015, Month.MAY, 31, 10, 0), "Завтрак", 1000, 2),
+            new Meal(LocalDateTime.of(2015, Month.MAY, 31, 13, 0), "Обед", 500, 2),
+            new Meal(LocalDateTime.of(2015, Month.MAY, 31, 20, 0), "Ужин", 510, 3)
     );
 
     {

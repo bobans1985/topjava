@@ -6,6 +6,7 @@ import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.model.User;
 import ru.javawebinar.topjava.repository.MealRepository;
 import ru.javawebinar.topjava.repository.dataObjects;
+import ru.javawebinar.topjava.util.exception.NotFoundException;
 
 import java.util.Collection;
 import java.util.Map;
@@ -36,25 +37,45 @@ public class InMemoryMealRepositoryImpl implements MealRepository {
         return meal;
     }
 
+
     @Override
-    public boolean delete(int id,User user) {
+    public boolean delete(int id,int userid) {
         LOG.info("meal delete: " + id);
-        if (repository.get(id).getUser()==user) {
-            repository.remove(id);
-            return true;
-        } else return false;
+        try {
+            if (repository.get(id).getUserid() == userid) {
+                repository.remove(id);
+                return true;
+            } else return false;
+        } catch (NotFoundException ex)
+        {
+            return false;
+        }
+    }
+
+    /*@Override
+    public boolean delete(int id) {
+        LOG.info("meal delete: " + id);
+        repository.remove(id);
+        return true;
     }
 
     @Override
-    public Meal get(int id,User user) {
+    public Meal get(int id) {
         LOG.info("meal get: " + id);
-        return repository.get(id).getUser()==user?repository.get(id):null;
+        return repository.get(id);
+    }*/
+
+    @Override
+    public Meal get(int id,int userid) {
+        LOG.info("meal get: " + id);
+        return repository.get(id).getUserid()==userid?repository.get(id):null;
     }
 
     @Override
-    public Collection<Meal> getAll(User user) {
-        LOG.info("meal getAll");
-        return repository.values().stream().filter(u1->u1.getUser()==user).collect(Collectors.toList());
+    public Collection<Meal> getAll() {
+        LOG.info("meal getAll for all users");
+        return repository.values();
     }
+
 }
 
