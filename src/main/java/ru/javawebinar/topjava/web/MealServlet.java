@@ -2,14 +2,10 @@ package ru.javawebinar.topjava.web;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
 import ru.javawebinar.topjava.AuthorizedUser;
 import ru.javawebinar.topjava.model.Meal;
-import ru.javawebinar.topjava.model.User;
-import ru.javawebinar.topjava.repository.MealRepository;
-import ru.javawebinar.topjava.repository.UserRepository;
-import ru.javawebinar.topjava.repository.mock.InMemoryMealRepositoryImpl;
-import ru.javawebinar.topjava.repository.mock.InMemoryUserRepositoryImpl;
-import ru.javawebinar.topjava.util.MealsUtil;
 import ru.javawebinar.topjava.util.exception.NotFoundException;
 import ru.javawebinar.topjava.web.meal.MealRestController;
 
@@ -19,9 +15,9 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
+import java.util.Arrays;
 import java.util.Objects;
 
 /**
@@ -31,11 +27,22 @@ import java.util.Objects;
 public class MealServlet extends HttpServlet {
     private static final Logger LOG = LoggerFactory.getLogger(MealServlet.class);
     AuthorizedUser userLogged = new AuthorizedUser();
-    MealRestController mealRestController = new MealRestController();
+    MealRestController mealRestController;
+    ConfigurableApplicationContext appCtx;
 
     @Override
     public void init(ServletConfig config) throws ServletException {
         super.init(config);
+        appCtx = new ClassPathXmlApplicationContext("spring/spring-app.xml");
+        LOG.debug("Spring beans = {}", Arrays.toString(appCtx.getBeanDefinitionNames()));
+        //mealRestController = (MealRestController) appCtx.getBean("mealRestController");
+        mealRestController =  appCtx.getBean(MealRestController.class);
+    }
+
+    @Override
+    public void destroy() {
+        super.destroy();
+        appCtx.close();
     }
 
     @Override
@@ -48,32 +55,41 @@ public class MealServlet extends HttpServlet {
                     request.getParameter("description"),
                     Integer.valueOf(request.getParameter("calories")), userLogged.id());
 
-            LOG.info(meal.isNew() ? "Create {}" : "Update {}", meal);
+            LOG.debug(meal.isNew() ? "Create {}" : "Update {}", meal);
             if (meal.isNew()) {
                 mealRestController.create(meal);
             } else mealRestController.update(meal, meal.getId());
             response.sendRedirect("meals");
 
         } catch (NotFoundException ex) {
-            LOG.error("Error doPost { }", ex);
+            LOG.error("Error doPost:", ex);
             response.sendRedirect("error.html");
         }
     }
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        AuthorizedUser.setId(1);
         String action = request.getParameter("action");
+        String startDate = request.getParameter("startDate");
+        String startTime = request.getParameter("startTime");
+        String endDate = request.getParameter("endDate");
+        String endTime = request.getParameter("endTime");
+        request.setAttribute("startDate", startDate);
+        request.setAttribute("startTime", startTime);
+        request.setAttribute("endDate", endDate);
+        request.setAttribute("endTime", endTime);
+
         try {
             if (action == null) {
-                LOG.info("getAll");
-                request.setAttribute("meals",
-                        mealRestController.getWithExceeded());
+                LOG.debug("getAll");
+                if ((startDate!=null) || (startTime!=null ) || (endDate!=null) || (endTime!=null)) {
+                    request.setAttribute("meals",mealRestController.getFilteredWithExceeded(startDate,startTime,endDate,endTime));
+                } else  request.setAttribute("meals",mealRestController.getWithExceeded());
                 request.getRequestDispatcher("/meals.jsp").forward(request, response);
 
             } else if ("delete".equals(action)) {
                 int id = getId(request);
-                LOG.info("Delete {}", id);
+                LOG.debug("Delete {}", id);
                 mealRestController.delete(id);
                 response.sendRedirect("meals");
 
@@ -85,7 +101,7 @@ public class MealServlet extends HttpServlet {
                 request.getRequestDispatcher("meal.jsp").forward(request, response);
             }
         } catch (NotFoundException ex) {
-            LOG.error("Error doGet", ex);
+            LOG.error("Error doGet:", ex);
             response.sendRedirect("error.html");
         }
     }

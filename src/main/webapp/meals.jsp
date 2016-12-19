@@ -19,8 +19,15 @@
 <section>
     <h2><a href="index.html">Home</a></h2>
     <h2>Meal list</h2>
-    <a href="meals?action=create">Add Meal</a>
+    <form method="get" action="meals">
+        <p>Дата с<input type="date" name="startDate" value="<%out.print(request.getParameter("startDate"));%>"></p>
+        <p>Время с<input type="time" name="startTime" value="<%out.print(request.getParameter("startTime"));%>"></p>
+        <p>Дата по<input type="date" name="endDate" value="<%out.print(request.getParameter("endDate"));%>"></p>
+        <p>Время по<input type="time" name="endTime" value="<%out.print(request.getParameter("endTime"));%>"></p>
+        <button type="submit">Фильтровать</button>
+    </form>
     <hr>
+    <a href="meals?action=create">Add Meal</a>
     <table border="1" cellpadding="8" cellspacing="0">
         <thead>
         <tr>

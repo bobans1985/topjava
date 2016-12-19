@@ -12,7 +12,7 @@ import ru.javawebinar.topjava.util.exception.NotFoundException;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static ru.javawebinar.topjava.util.ValidationUtil.checkNotFoundWithId;
+import static ru.javawebinar.topjava.util.ValidationUtil.*;
 
 /**
  * GKislin
@@ -34,27 +34,15 @@ public class MealServiceImpl implements MealService {
         return repository.save(meal);
     }
 
-    /*@Override
-    public void delete(int id) throws NotFoundException {
-        if (!repository.delete(id))  throw  new NotFoundException("Error delete");
-    }*/
-
     @Override
     public void delete(int id, int userid) throws NotFoundException {
-        if (!repository.delete(id, userid)) throw new NotFoundException("Error delete");
+        checkNotFoundWithId(repository.delete(id, userid),id);
     }
-
-
-    /*@Override
-    public Meal get(int id) throws NotFoundException {
-        return repository.get(id);
-    }*/
 
     @Override
     public Meal get(int id, int userid) throws NotFoundException {
         Meal meal = repository.get(id, userid);
-        if (meal == null) throw new NotFoundException("Error get");
-        return meal;
+        return checkNotFoundWithId(meal,id);
     }
 
     @Override
@@ -63,9 +51,9 @@ public class MealServiceImpl implements MealService {
     }
 
     @Override
-    public void update(Meal meal, int userid) throws NotFoundException {
-        if (repository.get(meal.getId(),userid) ==null) throw new NotFoundException("Error update");
-        else repository.save(meal);
+    public void update(Meal meal, int userid) throws NotFoundException{
+        checkNotFound(repository.get(meal.getId(),userid),"Error update. User not found");
+        repository.save(meal);
     }
 
 
