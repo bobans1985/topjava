@@ -7,6 +7,16 @@
 <body>
 <h2><a href="index.html">Home</a></h2>
 <h2>User list</h2>
-<%out.print(request.getAttribute("info"));%>
+
+<c:out value="${info}"/>
+<br/>
+<br/>
+Список пользователей:
+<c:forEach var="user" items="${userList}">
+    <jsp:useBean id="user" type="ru.javawebinar.topjava.model.User"/>
+    <p> ${user.id==userid?'(*)':null} ${user.id} / ${user.name} / ${user.email} </p>
+</c:forEach>
+
+
 </body>
 </html>

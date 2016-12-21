@@ -25,14 +25,7 @@ public class InMemoryUserRepositoryImpl implements UserRepository {
 
 
     {
-        dataObjects.USERS.forEach(
-                new Consumer<User>() {
-                    @Override
-                    public void accept(User user) {
-                        save(user);
-                    }
-                }
-        );
+        dataObjects.USERS.forEach(user -> save(user));
     }
 
     @Override
@@ -71,22 +64,15 @@ public class InMemoryUserRepositoryImpl implements UserRepository {
     @Override
     public List<User> getAll() {
         LOG.info("User getAll");
-        return repository.values().stream().sorted(new Comparator<User>() {
-            @Override
-            public int compare(User o1, User o2) {
-                return o1.getName().compareTo(o2.getName());
-            }
-        }).collect(Collectors.toList());
+        return repository.values().stream().sorted((o1, o2) -> o1.getName().compareTo(o2.getName())).collect(Collectors.toList());
     }
 
     @Override
     public User getByEmail(String email) {
         LOG.info("User getByEmail " + email);
         try {
-            //TODO
             return repository.values().stream().filter(u1 -> u1.getEmail().equals(email)).findFirst().get();
             //.reduce((u1,u2)->u1).get();
-
         } catch (NullPointerException ex) {
             LOG.error("Error {}", ex);
             return null;
