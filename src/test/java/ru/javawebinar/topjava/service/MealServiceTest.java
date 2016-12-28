@@ -1,29 +1,16 @@
 package ru.javawebinar.topjava.service;
 
-import ch.qos.logback.core.util.TimeUtil;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import ru.javawebinar.topjava.MealTestData;
-import ru.javawebinar.topjava.UserTestData;
 import ru.javawebinar.topjava.model.Meal;
-import ru.javawebinar.topjava.model.Role;
-import ru.javawebinar.topjava.model.User;
-import ru.javawebinar.topjava.to.MealWithExceed;
 import ru.javawebinar.topjava.util.DateTimeUtil;
 import ru.javawebinar.topjava.util.DbPopulator;
-import ru.javawebinar.topjava.util.MealsUtil;
-import ru.javawebinar.topjava.util.exception.NotFoundException;
-import ru.javawebinar.topjava.web.meal.MealRestController;
-import ru.javawebinar.topjava.web.user.AdminRestController;
 
-import ru.javawebinar.topjava.MealTestData.*;
-import sun.plugin.javascript.navig.Array;
+import ru.javawebinar.topjava.util.exception.NotFoundException;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -33,7 +20,6 @@ import java.util.stream.Collectors;
 
 import static ru.javawebinar.topjava.MealTestData.MATCHER;
 import static ru.javawebinar.topjava.MealTestData.userMeals;
-import static ru.javawebinar.topjava.UserTestData.ADMIN_ID;
 import static ru.javawebinar.topjava.UserTestData.USER_ID;
 
 
@@ -67,13 +53,9 @@ public class MealServiceTest {
         MATCHER.assertEquals(userMeals.get(1), service.get(100003, USER_ID));
     }
 
-    @Test
+    @Test(expected = NotFoundException.class)
     public void testGetNotUser() throws Exception {
-        try {
             MATCHER.assertEquals(userMeals.get(1), service.get(100006, USER_ID));
-        } catch (NotFoundException ex) {
-            //ex.printStackTrace();
-        }
     }
 
     @Test
@@ -84,16 +66,12 @@ public class MealServiceTest {
         MATCHER.assertCollectionEquals(list.stream().sorted(MEAL_COMPARATOR).collect(Collectors.toList()), service.getAll(USER_ID));
     }
 
-    @Test
+    @Test(expected = NotFoundException.class)
     public void testDeleteNotUser() throws Exception {
-        try {
             List<Meal> list = new ArrayList<>(userMeals);
             list.remove(1);
             service.delete(100006, USER_ID);
             MATCHER.assertCollectionEquals(list.stream().sorted(MEAL_COMPARATOR).collect(Collectors.toList()), service.getAll(USER_ID));
-        } catch (NotFoundException ex) {
-            //ex.printStackTrace();
-        }
     }
 
     @Test
@@ -137,16 +115,12 @@ public class MealServiceTest {
     }
 
 
-    @Test
+    @Test(expected = NotFoundException.class)
     public void testUpdateNotUser() throws Exception {
-        try {
             Meal meal = new Meal(userMeals.get(1));
             meal.setDescription("updated");
             service.update(meal, USER_ID);
             MATCHER.assertEquals(meal, service.get(100006, USER_ID));
-        } catch (NotFoundException ex) {
-            //ex.printStackTrace();
-        }
     }
 
 
