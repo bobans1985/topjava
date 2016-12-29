@@ -1,5 +1,8 @@
 Java Enterprise Online Project 
 ===============================
+
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/fce050f1733d42a1a3891ce7b03995f1)](https://www.codacy.com/app/bobans/topjava?utm_source=github.com&utm_medium=referral&utm_content=bobans1985/topjava&utm_campaign=badger)
+
 Наиболее востребованные технологии /инструменты / фреймворки Java Enterprise:
 Maven/ Spring/ Security/ JPA(Hibernate)/ REST(Jackson)/ Bootstrap(CSS)/ jQuery + plugins.
 
@@ -96,11 +99,12 @@ Optional
 Все остальное - опционально.
 
 #### HTML, JavaScript, CSS 
+- <a href="http://www.w3schools.com/default.asp">HTML, CSS, JAVASCRIPT, SQL, JQUERY, BOOTSTRAP</a>
 - <a href="https://www.youtube.com/watch?v=j0ycGQKqMT4">Введение в программирование на JavaScript</a>
--  <a href="http://www.intuit.ru/studies/courses/1102/134/info">Основы работы с HTML/CSS/JavaScript</a>
--  <a href="http://itchief.ru/lessons/javascript/94-javascript-introduction">JavaScript - Основы</a>
--  <a href="http://itchief.ru/lessons/bootstrap-3/19-introduction-to-twitter-bootstrap-3">Bootstrap 3 - Основы</a>
--  <a href="http://anton.shevchuk.name/jquery/">jQuery для начинающих</a>
+- <a href="http://www.intuit.ru/studies/courses/1102/134/info">Основы работы с HTML/CSS/JavaScript</a>
+- <a href="http://itchief.ru/lessons/javascript/94-javascript-introduction">JavaScript - Основы</a>
+- <a href="http://itchief.ru/lessons/bootstrap-3/19-introduction-to-twitter-bootstrap-3">Bootstrap 3 - Основы</a>
+- <a href="http://anton.shevchuk.name/jquery/">jQuery для начинающих</a>
 
 #### Java (базовые вещи)
 - <a href="http://www.intuit.ru/studies/courses/16/16/info">Интуит. Программирование на Java</a>
