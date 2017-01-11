@@ -74,6 +74,7 @@ public class MealServiceTest {
     @Test//(expected = NotFoundException.class)
     public void testDeleteNotFound() throws Exception {
         thrown.expect(NotFoundException.class);
+        thrown.expectMessage("Not found entity");
         service.delete(MEAL1_ID, 1);
     }
 
@@ -90,8 +91,10 @@ public class MealServiceTest {
         MATCHER.assertEquals(ADMIN_MEAL1, actual);
     }
 
-    @Test(expected = NotFoundException.class)
+    @Test//(expected = NotFoundException.class)
     public void testGetNotFound() throws Exception {
+        thrown.expect(NotFoundException.class);
+        thrown.expectMessage("Not found entity");
         service.get(MEAL1_ID, ADMIN_ID);
     }
 
@@ -102,8 +105,10 @@ public class MealServiceTest {
         MATCHER.assertEquals(updated, service.get(MEAL1_ID, USER_ID));
     }
 
-    @Test(expected = NotFoundException.class)
+    @Test//(expected = NotFoundException.class)
     public void testUpdateNotFound() throws Exception {
+        thrown.expect(NotFoundException.class);
+        thrown.expectMessage("Not found entity");
         service.update(MEAL1, ADMIN_ID);
     }
 
