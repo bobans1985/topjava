@@ -1,7 +1,17 @@
 package ru.javawebinar.topjava.service;
 
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
+import org.junit.rules.TestName;
+import org.junit.rules.TestRule;
+import org.junit.rules.TestWatcher;
+import org.junit.runner.Description;
 import org.junit.runner.RunWith;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.jdbc.Sql;
@@ -29,14 +39,41 @@ public class MealServiceTest {
     @Autowired
     private MealService service;
 
+    @Rule
+    public ExpectedException thrown = ExpectedException.none();
+
+    private static final Logger LOG = LoggerFactory.getLogger(MealServiceTest.class);
+    private static long startTime;
+    private static double allTime;
+
+    @Rule
+    public TestRule watchman = new TestWatcher() {
+        @Override
+        protected void succeeded(Description description) {
+            double time =(double)(System.currentTimeMillis() - startTime)/1000;
+            allTime+=time;
+            LOG.info("Test: {} execute time {} s", description.getMethodName(), time);
+        }
+        @Override
+        protected void starting(Description description) {
+            startTime = System.currentTimeMillis();
+        }
+    };
+
+    @AfterClass
+    public static void afterClass() {
+        LOG.info("All Test execute time {} s", allTime);
+    }
+
     @Test
     public void testDelete() throws Exception {
         service.delete(MEAL1_ID, USER_ID);
         MATCHER.assertCollectionEquals(Arrays.asList(MEAL6, MEAL5, MEAL4, MEAL3, MEAL2), service.getAll(USER_ID));
     }
 
-    @Test(expected = NotFoundException.class)
+    @Test//(expected = NotFoundException.class)
     public void testDeleteNotFound() throws Exception {
+        thrown.expect(NotFoundException.class);
         service.delete(MEAL1_ID, 1);
     }
 
