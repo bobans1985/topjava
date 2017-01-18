@@ -19,9 +19,6 @@ import java.util.List;
 @Transactional(readOnly = true)
 public interface CrudMealRepository extends JpaRepository<Meal, Integer> {
 
-    /*@Override
-    List<Meal> findAll(Sort sort);*/
-
     @Modifying
     @Query(name = Meal.ALL_SORTED)
     List<Meal> getAll(@Param("userId") int userId);
@@ -37,19 +34,15 @@ public interface CrudMealRepository extends JpaRepository<Meal, Integer> {
     @Transactional
     Meal save(Meal meal);
 
-
-    /*@Override
-    @Transactional
-    void delete(Integer integer);*/
-
     @Modifying
     @Transactional
     @Query(name = Meal.DELETE)
     int delete(@Param("id") int id, @Param("userId") int userId);
 
-
     @Override
     Meal findOne(Integer integer);
 
+    @Query("SELECT m FROM Meal m LEFT JOIN FETCH  m.user u WHERE m.id=:id AND m.user.id=:userId")
+    Meal getWithUser(@Param("id") int id, @Param("userId") int userId);
 
 }

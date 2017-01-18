@@ -16,7 +16,6 @@ import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.repository.MealRepository;
 
 import javax.sql.DataSource;
-import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -26,11 +25,10 @@ import java.util.List;
  */
 
 @Repository
-@Profile("hsqldb")
-public class JdbcMealRepositoryHsqldbImpl implements MealRepository {
+public class JdbcMealRepository implements MealRepository {
     private static final RowMapper<Meal> ROW_MAPPER = BeanPropertyRowMapper.newInstance(Meal.class);
     {
-        Logger LOG = LoggerFactory.getLogger(JdbcMealRepositoryHsqldbImpl.class);
+        Logger LOG = LoggerFactory.getLogger(JdbcMealRepository.class);
         LOG.info("Load JDBC repository");
     }
     @Autowired
@@ -41,8 +39,12 @@ public class JdbcMealRepositoryHsqldbImpl implements MealRepository {
 
     private SimpleJdbcInsert insertMeal;
 
+
     @Autowired
-    public JdbcMealRepositoryHsqldbImpl(DataSource dataSource) {
+    JdbcDateConverter converter;
+
+    @Autowired
+    public JdbcMealRepository(DataSource dataSource) {
         this.insertMeal = new SimpleJdbcInsert(dataSource)
                 .withTableName("meals")
                 .usingGeneratedKeyColumns("id");
@@ -50,11 +52,12 @@ public class JdbcMealRepositoryHsqldbImpl implements MealRepository {
 
     @Override
     public Meal save(Meal meal, int userId) {
+        Object date_time_converted=converter.convert(meal.getDateTime());
         MapSqlParameterSource map = new MapSqlParameterSource()
                 .addValue("id", meal.getId())
                 .addValue("description", meal.getDescription())
                 .addValue("calories", meal.getCalories())
-                .addValue("date_time", Timestamp.valueOf(meal.getDateTime()))
+                .addValue("date_time", date_time_converted)
                 .addValue("user_id", userId);
 
         if (meal.isNew()) {
@@ -94,6 +97,6 @@ public class JdbcMealRepositoryHsqldbImpl implements MealRepository {
     public List<Meal> getBetween(LocalDateTime startDate, LocalDateTime endDate, int userId) {
         return jdbcTemplate.query(
                 "SELECT * FROM meals WHERE user_id=?  AND date_time BETWEEN  ? AND ? ORDER BY date_time DESC",
-                ROW_MAPPER, userId, Timestamp.valueOf(startDate), Timestamp.valueOf(endDate));
+                ROW_MAPPER, userId, converter.convert(startDate), converter.convert(endDate));
     }
 }

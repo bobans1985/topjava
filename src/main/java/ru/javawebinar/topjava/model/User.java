@@ -54,6 +54,9 @@ public class User extends NamedEntity {
     @Digits(fraction = 0, integer = 4)
     private int caloriesPerDay = MealsUtil.DEFAULT_CALORIES_PER_DAY;
 
+    @OneToMany(fetch = FetchType.LAZY,mappedBy="user")
+    private Set<Meal> meals;
+
     public User() {
     }
 
@@ -118,6 +121,14 @@ public class User extends NamedEntity {
         return password;
     }
 
+    public Set<Meal> getMeals() {
+        return meals;
+    }
+
+    public void setMeals(Set<Meal> meals) {
+        this.meals = meals;
+    }
+
     @Override
     public String toString() {
         return "User (" +
@@ -127,6 +138,7 @@ public class User extends NamedEntity {
                 ", enabled=" + enabled +
                 ", roles=" + roles +
                 ", caloriesPerDay=" + caloriesPerDay +
+                //", meals=" + meals +
                 ')';
     }
 }

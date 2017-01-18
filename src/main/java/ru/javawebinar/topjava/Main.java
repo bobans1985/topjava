@@ -1,10 +1,8 @@
 package ru.javawebinar.topjava;
 
-import org.springframework.context.ConfigurableApplicationContext;
-import org.springframework.context.annotation.AnnotationConfigApplicationContext;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.context.support.GenericXmlApplicationContext;
-import org.springframework.core.env.ConfigurableEnvironment;
+import ru.javawebinar.topjava.service.MealService;
+import ru.javawebinar.topjava.service.UserService;
 import ru.javawebinar.topjava.web.meal.MealRestController;
 
 /**
@@ -21,7 +19,8 @@ public class Main {
         //ConfigurableApplicationContext springContext;
         GenericXmlApplicationContext springContext = new GenericXmlApplicationContext();
         MealRestController mealController;
-
+        UserService userService;
+        MealService mealService;
         //springContext =  new ClassPathXmlApplicationContext("spring/spring-app.xml", "spring/spring-db.xml");
         springContext.getEnvironment().setActiveProfiles(Profiles.ACTIVE_DB,Profiles.ACTIVE_METHOD);
         springContext.load("spring/spring-app.xml", "spring/spring-db.xml");
@@ -29,6 +28,11 @@ public class Main {
 
 
         mealController = springContext.getBean(MealRestController.class);
-        System.out.println(mealController);
+
+        userService = springContext.getBean(UserService.class);
+        mealService = springContext.getBean(MealService.class);
+
+        System.out.println(userService.getWithMeals(100000));
+        System.out.println(mealService.getWithUser(100005,100000));
     }
 }

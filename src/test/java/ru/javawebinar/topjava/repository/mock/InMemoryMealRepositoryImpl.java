@@ -68,5 +68,10 @@ public class InMemoryMealRepositoryImpl implements MealRepository {
         return meals == null ?
                 Stream.empty() : meals.values().stream().sorted(MEAL_COMPARATOR);
     }
+
+    @Override
+    public Meal getWithUser(int id, int userId) {
+        return null;
+    }
 }
 

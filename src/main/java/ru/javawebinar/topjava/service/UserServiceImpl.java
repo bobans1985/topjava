@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 import ru.javawebinar.topjava.model.User;
 import ru.javawebinar.topjava.repository.UserRepository;
@@ -64,5 +65,12 @@ public class UserServiceImpl implements UserService {
     @CacheEvict(value = "users", allEntries = true)
     @Override
     public void evictCache() {
+    }
+
+    @Override
+    public User getWithMeals(int id) throws NotFoundException,UnsupportedOperationException {
+        User user = repository.getWithMeals(id);
+        if (user==null) throw new UnsupportedOperationException("This method does not supported in this realization");
+        return checkNotFoundWithId(user,id);
     }
 }

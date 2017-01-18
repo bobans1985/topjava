@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.repository.MealRepository;
+import ru.javawebinar.topjava.util.exception.NotFoundException;
 
 import java.time.LocalDateTime;
 import java.util.Collection;
@@ -53,5 +54,12 @@ public class MealServiceImpl implements MealService {
     public Meal save(Meal meal, int userId) {
         Assert.notNull(meal, "meal must not be null");
         return repository.save(meal, userId);
+    }
+
+    @Override
+    public Meal getWithUser(int id, int userid) throws NotFoundException,UnsupportedOperationException {
+        Meal meal = repository.getWithUser(id, userid);
+        if (meal==null) throw new UnsupportedOperationException("This method does not supported in this realization");
+        return checkNotFoundWithId(meal, userid);
     }
 }
