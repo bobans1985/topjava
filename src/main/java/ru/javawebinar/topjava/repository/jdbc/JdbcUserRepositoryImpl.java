@@ -9,9 +9,12 @@ import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
+import org.springframework.jdbc.core.namedparam.SqlParameterSource;
+import org.springframework.jdbc.core.namedparam.SqlParameterSourceUtils;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 import ru.javawebinar.topjava.model.Role;
 import ru.javawebinar.topjava.model.User;
 import ru.javawebinar.topjava.repository.UserRepository;
@@ -43,6 +46,9 @@ public class JdbcUserRepositoryImpl implements UserRepository {
     private SimpleJdbcInsert insertRoles;
 
     @Autowired
+    private DataSourceTransactionManager transactionManager;
+
+    @Autowired
     public JdbcUserRepositoryImpl(DataSource dataSource) {
         this.insertUser = new SimpleJdbcInsert(dataSource)
                 .withTableName("users")
@@ -52,6 +58,7 @@ public class JdbcUserRepositoryImpl implements UserRepository {
     }
 
     @Override
+    @Transactional(value = "transactionManager")
     public User save(User user) {
         MapSqlParameterSource map = new MapSqlParameterSource()
                 .addValue("id", user.getId())
@@ -64,6 +71,10 @@ public class JdbcUserRepositoryImpl implements UserRepository {
 
         if (user.isNew()) {
             Number newKey = insertUser.executeAndReturnKey(map);
+
+            /*SqlParameterSource[] batch = SqlParameterSourceUtils.createBatch(user.getRoles().toArray());
+            namedParameterJdbcTemplate.batchUpdate("INSERT INTO user_roles (USER_ID,ROLE) VALUES (:user_id,:role)", batch);*/
+
             for (Role role : user.getRoles()) {
                 insertRoles.execute(new MapSqlParameterSource().addValue("user_id", newKey).addValue("role", role));
             }
@@ -77,6 +88,7 @@ public class JdbcUserRepositoryImpl implements UserRepository {
     }
 
     @Override
+    @Transactional(value = "transactionManager")
     public boolean delete(int id) {
         return jdbcTemplate.update("DELETE FROM users WHERE id=?", id) != 0;
     }
@@ -111,6 +123,7 @@ public class JdbcUserRepositoryImpl implements UserRepository {
             user.setRoles(getRoles(user.getId()));
         }*/
 
+        /*Второй способ
         List<User> users = jdbcTemplate.query("SELECT * FROM users  LEFT JOIN  user_roles ON users.id = user_roles.user_id ORDER BY name,email", new ResultSetExtractor<List<User>>() {
             @Override
             public List<User> extractData(ResultSet rs) throws SQLException, DataAccessException {
@@ -137,9 +150,30 @@ public class JdbcUserRepositoryImpl implements UserRepository {
                 }
                 return new ArrayList<>(map.values());
             }
+        });*/
+        /*Третий способ, имхо самый правильный*/
+        List<User> users = jdbcTemplate.query("SELECT u.*, string_agg(r.role, ',') as roles FROM users u  JOIN  user_roles r ON u.id = r.user_id GROUP BY id ORDER BY name,email", new RowMapper<User>() {
+            @Override
+            public User mapRow(ResultSet rs, int rowNum) throws SQLException {
+                User user = new User();
+                user.setId(rs.getInt("id"));
+                user.setName(rs.getString("name"));
+                user.setPassword(rs.getString("password"));
+                user.setEmail(rs.getString("email"));
+                user.setEnabled(rs.getBoolean("enabled"));
+                user.setRegistered(rs.getDate("registered"));
+                user.setCaloriesPerDay(rs.getInt("calories_per_day"));
+                Set<Role> roles = new LinkedHashSet<>();
+                for (String str : rs.getString("roles").split(",")) {
+                    roles.add(Role.valueOf(str));
+                }
+                user.setRoles(roles);
+                return user;
+            }
         });
 
-        return users.stream().sorted((u1, u2) -> u1.getName().compareTo(u2.getName())).collect(Collectors.toList());
+        return users;
+        //return users.stream().sorted((u1, u2) -> u1.getName().compareTo(u2.getName())).collect(Collectors.toList());
 
     }
 

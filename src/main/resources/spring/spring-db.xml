@@ -64,6 +64,8 @@
             <property name="dataSource" ref="dataSource" />
         </bean>
 
+        <tx:annotation-driven transaction-manager="transactionManager"/>
+
     </beans>
 
     <beans profile="jpa,datajpa">
