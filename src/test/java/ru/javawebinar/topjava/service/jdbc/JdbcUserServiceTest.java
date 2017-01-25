@@ -1,5 +1,6 @@
 package ru.javawebinar.topjava.service.jdbc;
 
+import jdk.nashorn.internal.ir.annotations.Ignore;
 import org.springframework.test.context.ActiveProfiles;
 import ru.javawebinar.topjava.service.AbstractUserServiceTest;
 

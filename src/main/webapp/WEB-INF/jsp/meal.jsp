@@ -15,15 +15,15 @@
     <form method="post" action="save">
         <input type="hidden" name="id" value="${meal.id}">
         <dl>
-            <dt>DateTime:</dt>
+            <dt><fmt:message key="meal.DateTime"/></dt>
             <dd><input type="datetime-local" value="${meal.dateTime}" name="dateTime"></dd>
         </dl>
         <dl>
-            <dt>Description:</dt>
+            <dt><fmt:message key="meal.Description"/>:</dt>
             <dd><input type="text" value="${meal.description}" size=40 name="description"></dd>
         </dl>
         <dl>
-            <dt>Calories:</dt>
+            <dt><fmt:message key="meal.Calories"/></dt>
             <dd><input type="number" value="${meal.calories}" name="calories"></dd>
         </dl>
         <button type="submit">Save</button>

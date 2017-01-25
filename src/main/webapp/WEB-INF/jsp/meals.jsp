@@ -9,35 +9,35 @@
 <jsp:include page="fragments/bodyHeader.jsp"/>
 
 <section>
-    <h3>Meal list</h3>
+    <h3><fmt:message key="meals.title"/></h3>
     <form method="post" action="meals">
         <dl>
-            <dt>From Date:</dt>
+            <dt><fmt:message key="meals.filter.from_date"/></dt>
             <dd><input type="date" name="startDate" value="${param.startDate}"></dd>
         </dl>
         <dl>
-            <dt>To Date:</dt>
+            <dt><fmt:message key="meals.filter.to_date"/></dt>
             <dd><input type="date" name="endDate" value="${param.endDate}"></dd>
         </dl>
         <dl>
-            <dt>From Time:</dt>
+            <dt><fmt:message key="meals.filter.from_time"/></dt>
             <dd><input type="time" name="startTime" value="${param.startTime}"></dd>
         </dl>
         <dl>
-            <dt>To Time:</dt>
+            <dt><fmt:message key="meals.filter.to_time"/></dt>
             <dd><input type="time" name="endTime" value="${param.endTime}"></dd>
         </dl>
-        <button type="submit">Filter</button>
+        <button type="submit"><fmt:message key="meals.filter.button"/></button>
     </form>
     <hr>
-    <a href="meals/new">Add Meal</a>
+    <a href="meals/new"><fmt:message key="meals.meal.add_button"/></a>
     <hr>
     <table border="1" cellpadding="8" cellspacing="0">
         <thead>
         <tr>
-            <th>Date</th>
-            <th>Description</th>
-            <th>Calories</th>
+            <th><fmt:message key="meals.meal.Date"/></th>
+            <th><fmt:message key="meals.meal.Description"/></th>
+            <th><fmt:message key="meals.meal.Calories"/></th>
             <th></th>
             <th></th>
         </tr>
@@ -50,8 +50,8 @@
                 </td>
                 <td>${meal.description}</td>
                 <td>${meal.calories}</td>
-                <td><a href="meals/update?id=${meal.id}">Update</a></td>
-                <td><a href="meals/delete?id=${meal.id}">Delete</a></td>
+                <td><a href="meals/update?id=${meal.id}"><fmt:message key="meals.meal.update_button"/></a></td>
+                <td><a href="meals/delete?id=${meal.id}"><fmt:message key="meals.meal.delete_button"/></a></td>
             </tr>
         </c:forEach>
     </table>
