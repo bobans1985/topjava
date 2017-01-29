@@ -20,6 +20,6 @@ public class ResourceControllerTest extends AbstractControllerTest {
         mockMvc.perform(get("/resources/css/style.css"))
                 .andDo(print())
                 .andExpect(status().isOk())
-                .andExpect(content().contentType("text/css"));
+                .andExpect(content().contentTypeCompatibleWith("text/css"));
     }
 }
