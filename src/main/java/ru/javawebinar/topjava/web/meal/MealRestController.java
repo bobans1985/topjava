@@ -1,8 +1,9 @@
 package ru.javawebinar.topjava.web.meal;
 
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.stereotype.Controller;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.to.MealWithExceed;
@@ -34,13 +35,12 @@ public class MealRestController extends AbstractMealController {
         return super.get(id);
     }
 
-    @Override
     @PostMapping(
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE
     )
-    public Meal create(@RequestBody Meal meal) {
-        return super.create(meal);
+    public ResponseEntity<Meal> createWithReturnCode(@RequestBody Meal meal) {
+        return new ResponseEntity<>(super.create(meal),HttpStatus.CREATED);
     }
 
 
@@ -70,10 +70,24 @@ public class MealRestController extends AbstractMealController {
             @DateTimeFormat(iso = DateTimeFormat.ISO.TIME) LocalTime startTime,
 
             @RequestParam(value = "endDate", required = false)
-            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)  LocalDate endDate,
+            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate,
 
             @RequestParam(value = "endTime", required = false)
-            @DateTimeFormat(iso = DateTimeFormat.ISO.TIME)  LocalTime endTime) {
+            @DateTimeFormat(iso = DateTimeFormat.ISO.TIME) LocalTime endTime) {
         return super.getBetween(startDate, startTime, endDate, endTime);
     }
+
+    @GetMapping(value = "/filters", produces = MediaType.APPLICATION_JSON_VALUE)
+    public List<MealWithExceed> getBetweenOtherDates(
+            @RequestParam(value = "start", required = false)  LocalDateTime start,
+            @RequestParam(value = "end", required = false)  LocalDateTime end) {
+
+        LocalDate startDate = start == null ? null : start.toLocalDate();
+        LocalTime startTime = start == null ? null : start.toLocalTime();
+        LocalDate endDate = end == null ? null : end.toLocalDate();
+        LocalTime endTime = end == null ? null : end.toLocalTime();
+
+        return super.getBetween(startDate, startTime, endDate, endTime);
+    }
+
 }
