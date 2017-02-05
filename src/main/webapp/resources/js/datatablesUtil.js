@@ -1,6 +1,7 @@
 function makeEditable() {
     $('.delete').click(function () {
-        deleteRow($(this).attr("id"));
+        //deleteRow($(this).attr("id"));
+        deleteRow($(this).closest('tr').attr('id'));
     });
 
     $('#detailsForm').submit(function () {
@@ -30,7 +31,9 @@ function deleteRow(id) {
 }
 
 function updateTable() {
-    $.get(ajaxUrl, function (data) {
+    var form = $('#filter');
+    var filter_string='?' + form.serialize();
+    $.get(ajaxUrl.substr(0, ajaxUrl.length - 1) + filter_string, function (data) {
         datatableApi.clear();
         $.each(data, function (key, item) {
             datatableApi.row.add(item);
@@ -41,6 +44,10 @@ function updateTable() {
 
 function save() {
     var form = $('#detailsForm');
+    //TODO log
+    var data = JSON.stringify(form.serialize());
+    console.log(data);
+
     $.ajax({
         type: "POST",
         url: ajaxUrl,
