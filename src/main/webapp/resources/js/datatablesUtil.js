@@ -9,6 +9,19 @@ function makeEditable() {
         return false;
     });
 
+    $('input[type=checkbox]').change(function () {
+        var userid = $(this).closest('tr').attr('id');
+        var bool = $(this).is(':checked') ? 1 : 0;;
+        $.ajax({
+            url: ajaxUrl + 'UpdateEnablesUser',
+            type: 'POST',
+            data: 'id=' + userid + '&enabled=' + bool,
+            success: function () {
+                successNoty('Updated user');
+            }
+        });
+    });
+
     $(document).ajaxError(function (event, jqXHR, options, jsExc) {
         failNoty(event, jqXHR, options, jsExc);
     });
@@ -32,7 +45,7 @@ function deleteRow(id) {
 
 function updateTable() {
     var form = $('#filter');
-    var filter_string='?' + form.serialize();
+    var filter_string = '?' + form.serialize();
     $.get(ajaxUrl.substr(0, ajaxUrl.length - 1) + filter_string, function (data) {
         datatableApi.clear();
         $.each(data, function (key, item) {
