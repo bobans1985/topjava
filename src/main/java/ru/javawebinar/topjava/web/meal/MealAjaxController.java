@@ -1,11 +1,20 @@
 package ru.javawebinar.topjava.web.meal;
 
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import ru.javawebinar.topjava.model.Meal;
+import ru.javawebinar.topjava.model.User;
+import ru.javawebinar.topjava.to.MealTo;
 import ru.javawebinar.topjava.to.MealWithExceed;
+import ru.javawebinar.topjava.to.UserTo;
+import ru.javawebinar.topjava.util.MealUtil;
+import ru.javawebinar.topjava.util.UserUtil;
 
+import javax.validation.Valid;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -29,7 +38,14 @@ public class MealAjaxController extends AbstractMealController {
         super.delete(id);
     }
 
-    @PostMapping
+
+    @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public Meal get(@PathVariable("id") int id) {
+        return super.get(id);
+    }
+
+
+    /*@PostMapping
     public void updateOrCreate(@RequestParam("id") Integer id,
                                @RequestParam("dateTime") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime dateTime,
                                @RequestParam("description") String description,
@@ -40,6 +56,21 @@ public class MealAjaxController extends AbstractMealController {
         } else {
             super.update(meal, id);
         }
+    }*/
+
+    @PostMapping
+    public ResponseEntity<String> createOrUpdate(@Valid MealTo mealTo, BindingResult result) {
+        if (result.hasErrors()) {
+            StringBuilder sb = new StringBuilder();
+            result.getFieldErrors().forEach(fe -> sb.append(fe.getField()).append(" ").append(fe.getDefaultMessage()).append("<br>"));
+            return new ResponseEntity<>(sb.toString(), HttpStatus.UNPROCESSABLE_ENTITY);
+        }
+        if (mealTo.isNew()) {
+            super.create(MealUtil.createNewFromTo(mealTo));
+        } else {
+            super.update(mealTo,mealTo.getId());
+        }
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @PostMapping(value = "/filter", produces = MediaType.APPLICATION_JSON_VALUE)
