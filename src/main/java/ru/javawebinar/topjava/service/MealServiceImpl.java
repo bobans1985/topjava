@@ -8,10 +8,6 @@ import org.springframework.util.Assert;
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.model.User;
 import ru.javawebinar.topjava.repository.MealRepository;
-import ru.javawebinar.topjava.to.MealTo;
-import ru.javawebinar.topjava.to.UserTo;
-import ru.javawebinar.topjava.util.MealUtil;
-import ru.javawebinar.topjava.util.UserUtil;
 import ru.javawebinar.topjava.util.ValidationUtil;
 
 import java.time.LocalDateTime;
@@ -57,23 +53,6 @@ public class MealServiceImpl implements MealService {
         return checkNotFoundWithId(repository.save(meal, userId), meal.getId());
     }
 
-
-
-    @Transactional
-    @Override
-    public Meal update(MealTo mealTo, int userId) {
-        Meal meal = get(mealTo.getId(),userId);
-        return repository.save(MealUtil.updateFromTo(meal, mealTo),userId);
-    }
-
-    /*@Override
-    @Transactional
-    public Meal update(MealTo mealTo, int userId) {
-        Assert.notNull(mealTo, "meal must not be null");
-        return update(MealUtil.createNewFromTo(mealTo),userId);
-        //return checkNotFoundWithId(repository.save(MealUtil.createNewFromTo(mealTo), userId), mealTo.getId());
-
-    }*/
 
     @Override
     public Meal save(Meal meal, int userId) {

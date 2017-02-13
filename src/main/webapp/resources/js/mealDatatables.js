@@ -17,6 +17,12 @@ function updateTable() {
 }
 
 $(function () {
+    $('#startDate').datetimepicker({format: 'YYYY-MM-DD'});
+    $('#endDate').datetimepicker({format: 'YYYY-MM-DD'});
+    $('#startTime').datetimepicker({format:'HH:mm'});
+    $('#endTime').datetimepicker({format:'HH:mm'});
+    //$('#dateTime').datetimepicker();//({format:'YYYY-MM-DDHH:mm'});
+
     datatableApi = $("#datatable").DataTable({
         "ajax": {
             "url": ajaxUrl,
@@ -51,7 +57,11 @@ $(function () {
                 "desc"
             ]
         ],
+        "createdRow": function( row, data, dataIndex ) {
+            if ( data["exceed"] == true ) {
+                $(row).addClass( 'exceeded' );
+            } else $(row).addClass( 'normal' );
+        },
         "initComplete": makeEditable
     });
-    //makeEditable();
 });

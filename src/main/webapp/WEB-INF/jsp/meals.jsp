@@ -9,6 +9,10 @@
 <script type="text/javascript" src="resources/js/mealDatatables.js" defer></script>
 <jsp:include page="fragments/bodyHeader.jsp"/>
 
+<link rel="stylesheet" href="webjars/Eonasdan-bootstrap-datetimepicker/4.17.43/css/bootstrap-datetimepicker.min.css" />
+<script type="text/javascript" src="webjars/momentjs/2.10.3/min/moment.min.js" defer></script>
+<script type="text/javascript" src="webjars/Eonasdan-bootstrap-datetimepicker/4.17.43/js/bootstrap-datetimepicker.min.js" defer></script>
+
 <div class="jumbotron">
     <div class="container">
         <div class="shadow">
@@ -63,7 +67,7 @@
                 </div>
                     </div>
                 </div>
-                <a class="btn btn-info" onclick="add()">
+                <a class="btn btn-info" onclick="add('<spring:message code="meals.add"/>')">
                     <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
                 </a>
 
@@ -136,11 +140,6 @@
 </div>
 </body>
 <script type="text/javascript">
-    var i18n = [];
-
     var editTitle ='<spring:message code="meals.edit"/>';
-    <c:forEach var='key' items='<%=new String[]{"common.deleted","common.saved","common.enabled","common.disabled","common.failed"}%>'>
-    i18n['${key}'] = '<spring:message code="${key}"/>';
-    </c:forEach>
 </script>
 </html>
