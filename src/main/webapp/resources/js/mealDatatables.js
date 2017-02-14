@@ -21,7 +21,7 @@ $(function () {
     $('#endDate').datetimepicker({format: 'YYYY-MM-DD'});
     $('#startTime').datetimepicker({format:'HH:mm'});
     $('#endTime').datetimepicker({format:'HH:mm'});
-    //$('#dateTime').datetimepicker();//({format:'YYYY-MM-DDHH:mm'});
+    $('#dateTime').datetimepicker({format:'YYY  Y-MM-DD\\THH:mm',sideBySide: true});
 
     datatableApi = $("#datatable").DataTable({
         "ajax": {
@@ -32,7 +32,10 @@ $(function () {
         "info": true,
         "columns": [
             {
-                "data": "dateTime"
+                "data": "dateTime",
+                "render": function (data, type, row) {
+                    return (moment(data).format("DD.MM.YYYY HH:mm"));
+                }
             },
             {
                 "data": "description"
