@@ -4,10 +4,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.servlet.ModelAndView;
 import ru.javawebinar.topjava.AuthorizedUser;
+import ru.javawebinar.topjava.util.exception.ErrorInfo;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -25,6 +27,13 @@ public class GlobalControllerExceptionHandler {
         LOG.error("Exception at request " + req.getRequestURL(), e);
         ModelAndView mav = new ModelAndView("exception/exception");
         mav.addObject("exception", e);
+
+        if (e.getClass()==DataIntegrityViolationException.class) {
+            DataIntegrityViolationException _ex = (DataIntegrityViolationException) e;
+            if (_ex.getMessage().indexOf("users_unique") > 0) {
+                mav.addObject("messages","User with this email already present in application");
+            }
+        }
 
         // Interceptor is not invoked, put userTo
         AuthorizedUser authorizedUser = AuthorizedUser.safeGet();
